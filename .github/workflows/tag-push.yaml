@@ -1,0 +1,62 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2025 The Linux Foundation
+
+# Runs on a tag push only
+name: "Test Release 🚀"
+
+# yamllint disable-line rule:truthy
+on:
+  push:
+    tags:
+      # Disable trigger only on semantic tags push
+      # - "v[0-9]+.[0-9]+.[0-9]+"
+      - "**"
+
+permissions: {}
+
+jobs:
+  check-trigger:
+    name: 'Validate Release'
+    runs-on: "ubuntu-24.04"
+    permissions:
+      contents: read
+    steps:
+      # Harden the runner used by this workflow
+      # yamllint disable-line rule:line-length
+      - uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
+        with:
+          egress-policy: audit
+
+      # yamllint disable-line rule:line-length
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: 'Verify push tags 🏷️'
+        # yamllint disable-line rule:line-length
+        uses: https://github.com/modeseven-lfreleng-actions/tag-push-verify-action@initial-update # ToDo: Testing
+        with:
+          versioning: 'semver'
+          exit_on_fail: 'true'
+
+  promote-release:
+    name: 'Promote Draft Release ⬆️'
+    needs: 'check-trigger'
+    runs-on: 'ubuntu-24.04'
+    permissions:
+      contents: write
+      # id-token: write
+    steps:
+    # Harden the runner used by this workflow
+    # yamllint disable-line rule:line-length
+    - uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
+      with:
+        egress-policy: audit
+
+    # yamllint disable-line rule:line-length
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+    - name: 'Promote draft release ⬆️'
+      # yamllint disable-line rule:line-length
+      uses: modeseven-lfreleng-actions/draft-release-promote-action@initial-update # ToDo: Testing
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
