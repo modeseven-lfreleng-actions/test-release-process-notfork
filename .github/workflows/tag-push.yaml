@@ -32,7 +32,7 @@ jobs:
       # yamllint disable-line rule:line-length
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - name: 'Verify push tags 🏷️'
+      - name: 'Verify pushed tag 🏷️'
         # yamllint disable-line rule:line-length
         uses: modeseven-lfreleng-actions/tag-push-verify-action@initial-update # ToDo: Testing
         with:
